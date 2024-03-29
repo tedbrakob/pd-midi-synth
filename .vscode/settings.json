@@ -1,0 +1,15 @@
+{
+    "playdate.source": "source",
+    "playdate.output": "bin/output.pdx",
+    "Lua.diagnostics.globals": [
+        "playdate", "import"
+    ],
+    "Lua.diagnostics.disable": [
+        "undefined-global", "lowercase-global"
+    ],
+    "Lua.runtime.nonstandardSymbol": [
+        "+=", "-=", "*=", "/="
+    ],
+    "Lua.workspace.library": ["$PLAYDATE_SDK_PATH/CoreLibs"],
+    "Lua.workspace.preloadFileSize": 1000
+}
