@@ -1,7 +1,7 @@
-name=Game Name
-author=Author Name
-description=This is a Playdate game.
-bundleID=com.domain.GameName
+name=Playdate MIDI Synth
+author=Ted Brakob
+description=MIDI Syth player for Playdate
+bundleID=com.tedbrakob.pdMidiSynth
 version=1.0
 imagePath=SystemAssets/
-buildNumber=6
+buildNumber=1

@@ -1,36 +1,61 @@
 import "CoreLibs/graphics"
-import "CoreLibs/sprites"
-import "CoreLibs/timer"
-
-import "globals"
-
-import "icon"
-
-import "settings/Settings"
-
-import "scenes/Scene"
-import "scenes/SceneManager"
 
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-math.randomseed(playdate.getSecondsSinceEpoch())
-pd.display.setRefreshRate(30)
+gfx.drawTextAligned("Open this url to use:", 200, 100, kTextAlignment.center)
+gfx.drawTextAligned("tedbrakob.github.io/pd-midi-synth-controller", 200, 140, kTextAlignment.center)
 
-Settings.loadFromDatastore()
-SCENE_MANAGER = SceneManager.new()
+local numberOfConcurrentNotes = 64
+local inst = pd.sound.instrument.new()
+local damperPedal = 0
+local damperNotes = {}
 
-function pd.gameWillPause()
-    pd.setMenuImage(SCENE_MANAGER.scene:getMenuImage())
+for _ = 1, numberOfConcurrentNotes, 1 do
+    inst:addVoice(pd.sound.synth.new(pd.sound.kWaveSine))
+end
+
+local function noteOn(note, velocity)
+    inst:playMIDINote(note, velocity)
+end
+
+local function noteOff(note)
+    if damperPedal == 1 then
+        table.insert(damperNotes, note)
+        return
+    end
+
+    inst:noteOff(note)
+end
+
+local function releaseDamperNotes()
+    for _, note in ipairs(damperNotes) do
+        inst:noteOff(note)
+    end
+
+    damperNotes = {}
+end
+
+function pd.serialMessageReceived(encodedMessage)
+    local message = json.decode(encodedMessage)
+
+    if message.type == 'noteon' then
+        noteOn(message.note, message.velocity)
+    end
+
+    if message.type == 'noteoff' then
+        noteOff(message.note)
+    end
+
+    if message.type == 'damperpedal' then
+        damperPedal = message.value
+
+        if damperPedal == 0 then
+            releaseDamperNotes()
+        end
+    end
 end
 
 function pd.update()
-    local sprite = gfx.sprite
 
-    sprite.update()
-    pd.timer.updateTimers()
-
-    if DEVELOPER_MODE then
-        pd.drawFPS(0, 1)
-    end
 end
