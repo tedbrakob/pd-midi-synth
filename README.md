@@ -1,6 +1,6 @@
 # Playdate Midi Synth
 
-Simple app to control the playdate via a midi keyboard.
+Simple app to control the Playdate's speaker via a midi keyboard.
 
 Try out via the [Playdate MIDI Synth Controller Demo Site](https://tedbrakob.github.io/pd-midi-synth-controller/)
 
